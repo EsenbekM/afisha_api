@@ -1,27 +1,46 @@
+from django.db.models.deletion import PROTECT
+from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
+from main.models import Cinema, Movie
 from rest_framework.response import Response
+from .serializers import MovieSerializer
 
-from main.models import Movie
-from .serializers import FilmsSerializer
+@api_view(['GET', 'POST'])  
+def cinema_list_view(request):
+    if request.method == 'GET':
+        movies = Movie.objects.all()
+        serializer = MovieSerializer(movies, many=True)
+        return Response(data=serializer.data)
+    elif request.method == 'POST':
+        title = request.data['title']
+        description = request.data['description', '']
+        cinema = request.data['cinema']
+        genres = request.data['genres', []]
+        movie = Movie.objects.create(
+            title=title, description=description, cinema=cinema,
+        )
+        movie.save()
+        movie.genres.set(genres)
+        movie.save()
 
-# Create your views here.
-@api_view(['GET'])
-def film_list_view(request):
-    movies = Movie.objects.all()
-    serializer = FilmsSerializer(movies, many=True)
-    return Response(data=serializer.data)
-
-@api_view(['GET'])
-def film_detail_view(request, id):
+@api_view(['GET', 'PUT', 'DELETE'])
+def cinema_detail_view(request, id):
     try:
-        product = Movie.objects.get(id=id)
+        movie = Movie.objects.get(id=id)
     except Movie.DoesNotExist:
-        return Response(
-            status=status.HTTP_404_NOT_FOUND,
-            data={
-                "ERROR": "Movie does not exist!"
-            }
-            )
-    serializer = FilmsSerializer(product, many=False)
-    return Response(data=serializer.data)
+        return Response(status=status.HTTP_404_NOT_FOUND,
+                        data={'eror':'Movie not found'})
+    if request.method == 'GET':
+        serializer = MovieSerializer(movie, many=False)
+        return Response(data=serializer.data)
+    elif request.method == 'PUT':
+        movie.title == request.data['title']
+        movie.description == request.data['description']
+        movie.cinema == request.data['cinema']
+        movie.genres.set(request.data['genres'])
+        movie.save()
+        return Response(data={'massage': 'Movie updated!'})
+    else:
+        movie.delete()
+        return Response()

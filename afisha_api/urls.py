@@ -8,4 +8,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/v1/movies/', views.film_list_view),
     path('api/v1/movies/<int:id>/', views.film_detail_view),
+    path('api/v1/products/<int:id>/', views.product_detail_view),
 ]

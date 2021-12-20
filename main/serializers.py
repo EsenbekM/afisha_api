@@ -10,3 +10,21 @@ class FilmsSerializer(serializers.ModelSerializer):
             'cinema',
             'genres',
             ]
+
+class CinemaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cinema
+        fields = '__all__'
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = '__all__'
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+class ProductDatailSerializer(serializers.ModelSerializer):
+    film = FilmsSerializer()

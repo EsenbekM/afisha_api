@@ -1,7 +1,21 @@
 from django.contrib import admin
-from . import models
+from .models import Cinema, Movie, Review, Genre
 
-admin.site.register(models.Cinema)
-admin.site.register(models.Genre)
-admin.site.register(models.Movie)
-admin.site.register(models.Review)
+
+class ReviewInline(admin.StackedInline):
+    model = Review
+    extra = 1
+
+
+class MovieAdmin(admin.ModelAdmin):
+    inlines = [ReviewInline]
+    search_fields = ['title', 'description']
+    list_display = 'title id'.split()
+    list_editable = ''.split()
+    list_filter = ' cinema genres'.split()
+
+
+admin.site.register(Cinema)
+admin.site.register(Review)
+admin.site.register(Movie, MovieAdmin)
+admin.site.register(Genre)
